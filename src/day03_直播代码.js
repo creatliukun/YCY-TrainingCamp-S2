@@ -1,35 +1,44 @@
 import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+// GLTFLoader GLTF加载器 ，glTF（gl传输格式）是一种开放格式的规范 （open format specification）， 用于更高效地传输、
+// 加载3D内容。该类文件以JSON（.gltf）格式或二进制（.glb）格式提供， 外部文件存储贴图（.jpg、.png）和额外的二进制数据（.bin）。
+// 一个glTF组件可传输一个或多个场景， 包括网格、材质、贴图、蒙皮、骨架、变形目标、动画、灯光以及摄像机
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 
 let mixer;
 let playerMixer;
 
+// Scene场景能够让你在什么地方、摆放什么东西来交给three.js来渲染，这是你放置物体、灯光和摄像机的地方。
 const scene = new THREE.Scene();
+//PerspectiveCamera透视相机，模拟人眼看到的景象，3D场景的渲染中使用得最普遍的投影模式
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 50);
+// 用WebGL渲染出你精心制作的场景。
 const renderer = new THREE.WebGLRenderer({ antialias: true });
+// shadowMap如果使用，它包含阴影贴图的引用。enabled: 如果设置开启，允许在场景中使用阴影贴图
 renderer.shadowMap.enabled = true;
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+renderer.setSize(window.innerWidth, window.innerHeight); // 对渲染的场景进行适配，宽高
+document.body.appendChild(renderer.domElement);// 将元素插入html网页中
 
-camera.position.set(5, 10, 25);
+camera.position.set(5, 10, 25); //设置相机位置
 
 // const controls = new OrbitControls(camera, renderer.domElement);
 
-scene.background = new THREE.Color(0.2, 0.2, 0.2);
+scene.background = new THREE.Color(0.2, 0.2, 0.2); // 设置相机背景色
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.1); //设置环境光，环境光会均匀的照亮场景中的所有物体。环
+// 境光不能用来投射阴影，因为它没有方向。
 scene.add(ambientLight);
 
-const directionLight = new THREE.DirectionalLight(0xffffff, 0.2);
+const directionLight = new THREE.DirectionalLight(0xffffff, 0.2);//设置平行光，来模拟太阳光 的效果
 scene.add(directionLight);
 
-// directionLight.position.set (10, 10, 10);
+// directionLight.position.set (10, 10, 10); //对平行光进行设置
 directionLight.lookAt(new THREE.Vector3(0, 0, 0));
 
-directionLight.castShadow = true;
+directionLight.castShadow = true; // 如果设置为 true 该平行光会产生动态阴影，警告: 这样做的代价比较高而且需要一直调整到阴影看起来正确. 
 
+// 这个 mapSize，camera 对象用来计算该平行光产生的阴影
 directionLight.shadow.mapSize.width = 2048;
 directionLight.shadow.mapSize.height = 2048;
 
@@ -53,12 +62,16 @@ directionLight.shadow.bias = -0.001;
 
 let playerMesh;
 let actionWalk, actionIdle;
+// Vector3该类表示的是一个三维向量（3D vector）。 一个三维向量表示的是一个有顺序的、三个为一组的数字组合（标记为x、y和z）
 const lookTarget = new THREE.Vector3(0, 2, 0);
+// 加载glb模型
 new GLTFLoader().load('../resources/models/player.glb', (gltf) => {
+    console.log(gltf, 'gltf')
+    // 场景
     playerMesh = gltf.scene;
     scene.add(gltf.scene);
 
-    playerMesh.traverse((child)=>{
+    playerMesh.traverse((child) => {
         child.receiveShadow = true;
         child.castShadow = true;
     })
@@ -105,7 +118,7 @@ window.addEventListener('keydown', (e) => {
         playerMesh.translateZ(1);
         const frontPos = playerMesh.position.clone();
         playerMesh.translateZ(-1);
-        
+
         const frontVector3 = frontPos.sub(curPos).normalize()
 
         const raycasterFront = new THREE.Raycaster(playerMesh.position.clone().add(playerHalfHeight), frontVector3);
@@ -117,7 +130,7 @@ window.addEventListener('keydown', (e) => {
         if (collisionResultsFrontObjs && collisionResultsFrontObjs[0] && collisionResultsFrontObjs[0].distance > 1) {
             playerMesh.translateZ(0.1);
         }
-        
+
 
 
         if (!isWalk) {
@@ -234,7 +247,7 @@ new GLTFLoader().load('../resources/models/zhanguan.glb', (gltf) => {
 //         renderer.render(scene, camera);
 // });
 
-function crossPlay(curAction, newAction) {
+function crossPlay (curAction, newAction) {
     curAction.fadeOut(0.3);
     newAction.reset();
     newAction.setEffectiveWeight(1);
@@ -243,7 +256,7 @@ function crossPlay(curAction, newAction) {
 }
 
 
-function animate() {
+function animate () {
     requestAnimationFrame(animate);
 
     renderer.render(scene, camera);

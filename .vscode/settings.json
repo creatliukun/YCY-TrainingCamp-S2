@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
         "gltf"
-    ]
+    ],
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "aiXcoder.showTrayIcon": true
 }

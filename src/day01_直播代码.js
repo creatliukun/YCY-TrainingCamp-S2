@@ -1,7 +1,12 @@
-import * as THREE from 'three';
+import * as THREE from 'three'; // 导入THREEJS的API
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+// OrbitControls 轨道控制器，可以使得相机围绕目标进行轨道运动。
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+// GLTFLoader GLTF加载器 ，glTF（gl传输格式）是一种开放格式的规范 （open format specification）， 用于更高效地传输、
+// 加载3D内容。该类文件以JSON（.gltf）格式或二进制（.glb）格式提供， 外部文件存储贴图（.jpg、.png）和额外的二进制数据（.bin）。
+// 一个glTF组件可传输一个或多个场景， 包括网格、材质、贴图、蒙皮、骨架、变形目标、动画、灯光以及摄像机
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
+// RGBELoader 
 
 let mixer;
 
@@ -58,16 +63,16 @@ new RGBELoader()
         scene.environment = texture;
         renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.render(scene, camera);
-});
+    });
 
-function animate() {
+function animate () {
     requestAnimationFrame(animate);
 
     renderer.render(scene, camera);
 
     controls.update();
 
-    if (donuts){
+    if (donuts) {
         donuts.rotation.y += 0.01;
     }
 
